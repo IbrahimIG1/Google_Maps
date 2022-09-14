@@ -1,10 +1,10 @@
-import 'dart:collection';
-
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps/app_cubit/app_cubit.dart';
 import 'package:google_maps/app_cubit/app_states_cubit.dart';
+import 'package:google_maps/home/home_cubit/cubit.dart';
+import 'package:google_maps/home/home_cubit/cubit_state.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Home extends StatefulWidget {
@@ -45,28 +45,14 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AppCubit, AppCubitStates>(
+    return BlocConsumer<HomeCubit, HomeCubitState>(
         listener: (context, state) {},
         builder: (context, state) {
-          var cubit = AppCubit.get(context);
+          var cubit = HomeCubit.get(context);
           return Scaffold(
-            floatingActionButton: Align(
-              alignment: Alignment.bottomLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 25),
-                child: FloatingActionButton(
-                  onPressed: () {
-                    cubit.isGps(context);
-                  },
-                  child: Icon(
-                    Icons.gps_fixed,
-                  ),
-                ),
-              ),
-            ),
             appBar: AppBar(
               title: Text('Google Maps'),
-              centerTitle: true,
+              // automaticallyImplyLeading: false,
               actions: [
                 IconButton(onPressed: () {}, icon: Icon(Icons.gps_fixed))
               ],
@@ -74,24 +60,65 @@ class _HomeState extends State<Home> {
             body: Stack(
               children: [
                 ConditionalBuilder(
-                    condition: state is GetPositionSuccessState,
+                    condition: cubit.gpsValue
+                        ? state is GetPositionSuccessHomeState
+                        : true,
                     fallback: (context) => LinearProgressIndicator(),
                     builder: (context) {
-                      return GoogleMap(
-                          mapType: MapType.normal,
-                          initialCameraPosition: CameraPosition(
-                            target: LatLng(
-                              cubit.loc!.latitude,
-                              cubit.loc!.longitude,
-                            ),
-                            zoom: 14,
-                          ),
-                          onMapCreated: (GoogleMapController controller) {
-                            cubit.setMarker();
-                          },
-                          markers: cubit.myMarker,
-                          // polygons: myPolygon(),
-                          circles: cubit.drawCircle(),);
+                      return BlocConsumer<AppCubit, AppCubitStates>(
+                          listener: (context, state) {},
+                          builder: (context, state) {
+                            var appCubit = AppCubit.get(context);
+                            return Stack(
+                              alignment: Alignment.bottomLeft,
+                              children: [
+                                GoogleMap(
+                                  mapType: MapType.normal,
+                                  initialCameraPosition: CameraPosition(
+                                    target: cubit.gpsValue == true
+                                        ? LatLng(
+                                            cubit.targetLat,
+                                            cubit.targetLong,
+                                          )
+                                        : LatLng(
+                                            cubit.startLat,
+                                            cubit.startLong,
+                                          ),
+                                    zoom: 14,
+                                  ),
+                                  onMapCreated:
+                                      (GoogleMapController controller) {
+                                    cubit.setMarker();
+                                  },
+                                  onTap: (LatLng latLng) {
+                                    appCubit.mapMarkClick(latLng);
+                                    appCubit.streamLocationCancel();
+                                  },
+                                  markers: appCubit.clickMarker,
+                                  // polygons: myPolygon(),
+                                  circles: appCubit.drawCircle(
+                                    latLng: cubit.gpsValue == true
+                                        ? LatLng(
+                                            cubit.targetLat,
+                                            cubit.targetLong,
+                                          )
+                                        : LatLng(
+                                            cubit.startLat,
+                                            cubit.startLong,
+                                          ),
+                                  ),
+                                ),
+                                IconButton(
+                                  iconSize: 40,
+                                  color: Colors.red,
+                                  icon: Icon(Icons.gps_fixed),
+                                  onPressed: () {
+                                    appCubit.streamLocation();
+                                  },
+                                ),
+                              ],
+                            );
+                          });
                     }),
                 Container(
                   alignment: Alignment.bottomCenter,
