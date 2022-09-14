@@ -83,19 +83,46 @@ class _HomeState extends State<Home> {
                                           ),
                                   ),
                                 ),
-                                IconButton(
-                                  iconSize: 40,
-                                  color: Colors.red,
-                                  icon: Icon(Icons.gps_fixed),
-                                  onPressed: () {
-                                    if (cubit.gpsValue) {
-                                      appCubit.streamLocation();
-                                    } else {
-                                      showToast(
-                                          txt: 'Open GPS',
-                                          color: Colors.redAccent);
-                                    }
-                                  },
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 20, bottom: 20),
+                                  child: InkWell(
+                                    onTap: () {
+                                      if (cubit.gpsValue) {
+                                        appCubit.streamLocation();
+                                      } else {
+                                        showToast(
+                                            txt: 'Open GPS',
+                                            color: Colors.redAccent);
+                                      }
+                                    },
+                                    child: Container(
+                                      width: 50,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                          boxShadow: [
+                                            if (appCubit.livePosition != null)
+                                              BoxShadow(
+                                                color: Colors.white,
+                                                blurStyle: BlurStyle.solid,
+                                                blurRadius: 15,
+                                              ),
+                                            if (appCubit.livePosition != null)
+                                              BoxShadow(
+                                                color: Colors.red,
+                                                blurStyle: BlurStyle.solid,
+                                                blurRadius: 15,
+                                              )
+                                          ],
+                                          color: Colors.blue,
+                                          shape: BoxShape.circle),
+                                      child: Icon(
+                                        Icons.gps_fixed,
+                                        size: 30,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ],
                             );
@@ -113,7 +140,7 @@ class _HomeState extends State<Home> {
           );
         });
   }
-   // getCustomImage() async {
+  // getCustomImage() async {
   //   // change crouser GPS
   //   customMarker = await BitmapDescriptor.fromAssetImage(
   //       ImageConfiguration(size: Size(10, 10)), 'assets/images/car_logo2.png');

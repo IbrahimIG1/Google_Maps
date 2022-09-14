@@ -27,13 +27,8 @@ class AppCubit extends Cubit<AppCubitStates> {
 
   Set<Marker> clickMarker = {};
   mapMarkClick(LatLng latLng) {
-    if(clickMarker.isEmpty)
-    {
+    clickMarker.clear();
     clickMarker.add(Marker(markerId: MarkerId('1'), position: latLng));
-    }else{
-    clickMarker.remove(Marker(markerId: MarkerId('1')));
-    clickMarker.add(Marker(markerId: MarkerId('1'), position: latLng));
-    }
     controller!.animateCamera(CameraUpdate.newLatLngZoom(latLng, 18));
 
     emit(MapMarkClicSuccessState());
@@ -48,6 +43,7 @@ class AppCubit extends Cubit<AppCubitStates> {
   }
 
   streamLocationCancel() {
-    livePosition!.pause();
+    livePosition!.cancel();
+    livePosition = null;
   }
 }
