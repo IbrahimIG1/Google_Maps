@@ -8,6 +8,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class AppCubit extends Cubit<AppCubitStates> {
   AppCubit() : super(InitialState());
   static AppCubit get(context) => BlocProvider.of(context);
+  double zoom = 14;
+  GoogleMapController? controller;
 
   // Draw Circle on map
   Set<Circle> drawCircle({required LatLng latLng}) {
@@ -24,23 +26,28 @@ class AppCubit extends Cubit<AppCubitStates> {
   }
 
   Set<Marker> clickMarker = {};
-  
   mapMarkClick(LatLng latLng) {
+    if(clickMarker.isEmpty)
+    {
+    clickMarker.add(Marker(markerId: MarkerId('1'), position: latLng));
+    }else{
     clickMarker.remove(Marker(markerId: MarkerId('1')));
     clickMarker.add(Marker(markerId: MarkerId('1'), position: latLng));
+    }
+    controller!.animateCamera(CameraUpdate.newLatLngZoom(latLng, 18));
+
     emit(MapMarkClicSuccessState());
   }
 
   StreamSubscription<Position>? livePosition;
   streamLocation() {
     livePosition = Geolocator.getPositionStream().listen((Position position) {
-      mapMarkClick(LatLng(position.latitude, position.longitude));
-      print(position);
-      print(position);
+      LatLng latlong = LatLng(position.latitude, position.longitude);
+      mapMarkClick(latlong);
     });
   }
-  streamLocationCancel()
-  {
-    livePosition!.cancel();
+
+  streamLocationCancel() {
+    livePosition!.pause();
   }
 }

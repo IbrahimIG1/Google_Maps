@@ -15,7 +15,13 @@ class HomeCubit extends Cubit<HomeCubitState> {
   bool gpsValue = false;
   Future isGps(context) async {
     gpsValue = await Geolocator.isLocationServiceEnabled();
-    print('Gps Enabled');
+    Geolocator.getServiceStatusStream().listen((event) {
+      if (event == ServiceStatus.disabled) {
+        gpsValue = false;
+      } else if (event == ServiceStatus.enabled) {
+        gpsValue = true;
+      }
+    });
     if (gpsValue) {
       getPosition(context);
     } else {
@@ -49,7 +55,7 @@ class HomeCubit extends Cubit<HomeCubitState> {
       targetLong = loc!.longitude;
       print("$targetLat + $targetLong");
       getPlaceInfo(positionvalue: value).then((value) {
-      setMarker();
+        setMarker();
       });
       emit(GetPositionSuccessHomeState());
     }).catchError((error) {

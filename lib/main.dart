@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps/app_cubit/app_cubit.dart';
 import 'package:google_maps/home/home.dart';
-import 'package:google_maps/home/home_cubit/cubit.dart';
+import 'package:google_maps/home/home_cubit/home_cubit.dart';
 
 void main() {
   runApp(MyApp());
@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
         )
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Home(),
       ),
     );

@@ -1,9 +1,9 @@
-abstract class HomeCubitState{}
+abstract class HomeCubitState {}
 
-class InitStateHome extends HomeCubitState{}
+class InitStateHome extends HomeCubitState {}
 
 //  request GPS Permission
-class IsGpsStateSuccess extends HomeCubitState {}
+class StatusServiceState extends HomeCubitState {}
 
 // Get Position
 class GetPositionLoadingState extends HomeCubitState {}
@@ -27,4 +27,3 @@ class SetMarkerSuccessState extends HomeCubitState {}
 class SetMarkerErrorState extends HomeCubitState {}
 
 class MapMarkClicSuccessState extends HomeCubitState {}
-

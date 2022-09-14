@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps/app_cubit/app_cubit.dart';
 import 'package:google_maps/app_cubit/app_states_cubit.dart';
-import 'package:google_maps/home/home_cubit/cubit.dart';
+import 'package:google_maps/home/home_cubit/home_cubit.dart';
 import 'package:google_maps/home/home_cubit/cubit_state.dart';
+import 'package:google_maps/shared/flutter_toast/flutter_toast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Home extends StatefulWidget {
@@ -16,33 +17,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   BitmapDescriptor? customMarker;
-
-  getCustomImage() async {
-    // change crouser GPS
-    customMarker = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(size: Size(10, 10)), 'assets/images/car_logo2.png');
-  }
-
-  Set<Polygon> myPolygon() {
-    // Draw traingle on map or any shap
-    var polygonCoords = <LatLng>[];
-    polygonCoords.add(LatLng(37.43296265331129, -122.08832357078792));
-    polygonCoords.add(LatLng(37.43006265331129, -122.08832357078792));
-    polygonCoords.add(LatLng(37.43006265331129, -122.08332357078792));
-    polygonCoords.add(LatLng(37.43296265331129, -122.08832357078792));
-
-    var polygonSet = Set<Polygon>();
-    polygonSet.add(
-      Polygon(
-        polygonId: PolygonId('1'),
-        points: polygonCoords,
-        strokeColor: Colors.red,
-        strokeWidth: 1,
-      ),
-    );
-    return polygonSet;
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeCubit, HomeCubitState>(
@@ -53,9 +27,7 @@ class _HomeState extends State<Home> {
             appBar: AppBar(
               title: Text('Google Maps'),
               // automaticallyImplyLeading: false,
-              actions: [
-                IconButton(onPressed: () {}, icon: Icon(Icons.gps_fixed))
-              ],
+              actions: [IconButton(onPressed: () {}, icon: Icon(Icons.search))],
             ),
             body: Stack(
               children: [
@@ -84,15 +56,18 @@ class _HomeState extends State<Home> {
                                             cubit.startLat,
                                             cubit.startLong,
                                           ),
-                                    zoom: 14,
+                                    zoom: appCubit.zoom,
                                   ),
                                   onMapCreated:
                                       (GoogleMapController controller) {
-                                    cubit.setMarker();
+                                    appCubit.controller = controller;
+                                    // cubit.setMarker();
                                   },
                                   onTap: (LatLng latLng) {
                                     appCubit.mapMarkClick(latLng);
-                                    appCubit.streamLocationCancel();
+                                    if (appCubit.livePosition != null) {
+                                      appCubit.streamLocationCancel();
+                                    }
                                   },
                                   markers: appCubit.clickMarker,
                                   // polygons: myPolygon(),
@@ -113,7 +88,13 @@ class _HomeState extends State<Home> {
                                   color: Colors.red,
                                   icon: Icon(Icons.gps_fixed),
                                   onPressed: () {
-                                    appCubit.streamLocation();
+                                    if (cubit.gpsValue) {
+                                      appCubit.streamLocation();
+                                    } else {
+                                      showToast(
+                                          txt: 'Open GPS',
+                                          color: Colors.redAccent);
+                                    }
                                   },
                                 ),
                               ],
@@ -132,4 +113,29 @@ class _HomeState extends State<Home> {
           );
         });
   }
+   // getCustomImage() async {
+  //   // change crouser GPS
+  //   customMarker = await BitmapDescriptor.fromAssetImage(
+  //       ImageConfiguration(size: Size(10, 10)), 'assets/images/car_logo2.png');
+  // }
+
+  // Set<Polygon> myPolygon() {
+  //   // Draw traingle on map or any shap
+  //   var polygonCoords = <LatLng>[];
+  //   polygonCoords.add(LatLng(37.43296265331129, -122.08832357078792));
+  //   polygonCoords.add(LatLng(37.43006265331129, -122.08832357078792));
+  //   polygonCoords.add(LatLng(37.43006265331129, -122.08332357078792));
+  //   polygonCoords.add(LatLng(37.43296265331129, -122.08832357078792));
+
+  //   var polygonSet = Set<Polygon>();
+  //   polygonSet.add(
+  //     Polygon(
+  //       polygonId: PolygonId('1'),
+  //       points: polygonCoords,
+  //       strokeColor: Colors.red,
+  //       strokeWidth: 1,
+  //     ),
+  //   );
+  //   return polygonSet;
+  // }
 }
