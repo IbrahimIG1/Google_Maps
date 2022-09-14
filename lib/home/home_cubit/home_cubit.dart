@@ -34,7 +34,7 @@ class HomeCubit extends Cubit<HomeCubitState> {
     LocationPermission? locationPermission;
     if (locationPermission == LocationPermission.denied) {
       locationPermission = await Geolocator.requestPermission();
-      print('Request');
+      
       // emit(IsGpsStateSuccess());
     }
   }
@@ -45,21 +45,19 @@ class HomeCubit extends Cubit<HomeCubitState> {
 
   //  Get Phone Position (latitude , longitude)
   Position? loc;
-  var targetLat;
-  var targetLong;
+  double? targetLat;
+  double? targetLong;
   getPosition(context) async {
     emit(GetPositionLoadingState());
     await Geolocator.getCurrentPosition().then((value) {
       loc = value;
       targetLat = loc!.latitude;
       targetLong = loc!.longitude;
-      print("$targetLat + $targetLong");
       getPlaceInfo(positionvalue: value).then((value) {
         setMarker();
       });
       emit(GetPositionSuccessHomeState());
     }).catchError((error) {
-      print('Error In Get Position ${error.toString()}');
       emit(GetPositionErrorState());
     });
   }
@@ -72,17 +70,15 @@ class HomeCubit extends Cubit<HomeCubitState> {
         Marker(
             draggable: true,
             onDragEnd: (LatLng latLng) {},
-            markerId: MarkerId('1'),
+            markerId: const MarkerId('1'),
             position: LatLng(loc!.latitude, loc!.longitude),
             infoWindow: InfoWindow(
               title: infoList[1].locality,
               snippet: infoList[1].street,
             )),
       );
-      print('Set Marker');
       // emit(SetMarkerSuccessState());
     } catch (e) {
-      print('Error In Set Mark ${e.toString()}');
       emit(SetMarkerErrorState());
     }
   }
@@ -97,7 +93,6 @@ class HomeCubit extends Cubit<HomeCubitState> {
       infoList = value;
       // emit(GetPlaceInfoSuccessState());
     }).catchError((error) {
-      print('Error In get Place Info');
       emit(GetPlaceInfoErrorState());
     });
   }

@@ -9,7 +9,7 @@ import 'package:google_maps/shared/flutter_toast/flutter_toast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Home extends StatefulWidget {
-  Home({Key? key}) : super(key: key);
+  const Home({Key? key}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
@@ -25,9 +25,9 @@ class _HomeState extends State<Home> {
           var cubit = HomeCubit.get(context);
           return Scaffold(
             appBar: AppBar(
-              title: Text('Google Maps'),
+              title: const Text('Google Maps'),
               // automaticallyImplyLeading: false,
-              actions: [IconButton(onPressed: () {}, icon: Icon(Icons.search))],
+              actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))],
             ),
             body: Stack(
               children: [
@@ -35,7 +35,7 @@ class _HomeState extends State<Home> {
                     condition: cubit.gpsValue
                         ? state is GetPositionSuccessHomeState
                         : true,
-                    fallback: (context) => LinearProgressIndicator(),
+                    fallback: (context) => const LinearProgressIndicator(),
                     builder: (context) {
                       return BlocConsumer<AppCubit, AppCubitStates>(
                           listener: (context, state) {},
@@ -49,8 +49,8 @@ class _HomeState extends State<Home> {
                                   initialCameraPosition: CameraPosition(
                                     target: cubit.gpsValue == true
                                         ? LatLng(
-                                            cubit.targetLat,
-                                            cubit.targetLong,
+                                            cubit.targetLat!,
+                                            cubit.targetLong!,
                                           )
                                         : LatLng(
                                             cubit.startLat,
@@ -74,8 +74,8 @@ class _HomeState extends State<Home> {
                                   circles: appCubit.drawCircle(
                                     latLng: cubit.gpsValue == true
                                         ? LatLng(
-                                            cubit.targetLat,
-                                            cubit.targetLong,
+                                            cubit.targetLat!,
+                                            cubit.targetLong!,
                                           )
                                         : LatLng(
                                             cubit.startLat,
@@ -102,13 +102,13 @@ class _HomeState extends State<Home> {
                                       decoration: BoxDecoration(
                                           boxShadow: [
                                             if (appCubit.livePosition != null)
-                                              BoxShadow(
+                                              const BoxShadow(
                                                 color: Colors.white,
                                                 blurStyle: BlurStyle.solid,
                                                 blurRadius: 15,
                                               ),
                                             if (appCubit.livePosition != null)
-                                              BoxShadow(
+                                              const BoxShadow(
                                                 color: Colors.red,
                                                 blurStyle: BlurStyle.solid,
                                                 blurRadius: 15,
@@ -116,7 +116,7 @@ class _HomeState extends State<Home> {
                                           ],
                                           color: Colors.blue,
                                           shape: BoxShape.circle),
-                                      child: Icon(
+                                      child: const Icon(
                                         Icons.gps_fixed,
                                         size: 30,
                                         color: Colors.white,
@@ -130,7 +130,7 @@ class _HomeState extends State<Home> {
                     }),
                 Container(
                   alignment: Alignment.bottomCenter,
-                  child: Text(
+                  child: const Text(
                     'Ibrahim Map',
                     style: TextStyle(fontSize: 18),
                   ),

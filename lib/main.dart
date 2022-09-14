@@ -5,7 +5,7 @@ import 'package:google_maps/home/home.dart';
 import 'package:google_maps/home/home_cubit/home_cubit.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

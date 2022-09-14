@@ -13,22 +13,22 @@ class AppCubit extends Cubit<AppCubitStates> {
 
   // Draw Circle on map
   Set<Circle> drawCircle({required LatLng latLng}) {
-    Set<Circle> myCircle = Set.from([
+    Set<Circle> myCircle = {
       Circle(
-          circleId: CircleId('1'),
+          circleId: const CircleId('1'),
           center: latLng,
           radius: 400,
           strokeWidth: 1,
           fillColor: Colors.transparent,
           strokeColor: Colors.blue[300]!),
-    ]);
+    };
     return myCircle;
   }
 
   Set<Marker> clickMarker = {};
   mapMarkClick(LatLng latLng) {
     clickMarker.clear();
-    clickMarker.add(Marker(markerId: MarkerId('1'), position: latLng));
+    clickMarker.add(Marker(markerId: const MarkerId('1'), position: latLng));
     controller!.animateCamera(CameraUpdate.newLatLngZoom(latLng, 18));
 
     emit(MapMarkClicSuccessState());
